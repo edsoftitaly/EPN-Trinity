@@ -41,6 +41,9 @@ jobs:
             --validate "build/EPNTrinity_artefacts/Release/VST3/EPN Trinity.vst3" 2>&1 | tee pluginval.txt
           rc=${PIPESTATUS[0]}
           set -e
+          out=$(tail -40 pluginval.txt); out="${out//'%'/'%25'}"; out="${out//$'\r'/}"; out="${out//$'\n'/'%0A'}"
+          echo "::notice title=pluginval output (rc=$rc, $(wc -l < pluginval.txt) lines)::$out"
+          ls -la pluginval
           if [ "$rc" -ne 0 ]; then
             # surface the interesting part as an annotation (readable without the log blob)
             msg=$(grep -nE "FAILED|!!!|Starting test|Error|error|Assert|Exception|Completed" pluginval.txt | tail -60)
